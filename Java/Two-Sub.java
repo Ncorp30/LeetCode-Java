@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Subtraction {
+public class Two_Sub {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
