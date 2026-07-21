@@ -6,10 +6,10 @@ class Solution {
         Map<Integer, Integer> lookup = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {
             if (lookup.containsKey(target - nums[i])) {
-                return new int[] { lookup.get(target -, nums[i]), i };
+                return new int[] { lookup.get(target - nums[i]), i };
             }
             lookup.put(nums[i], i);
         }
-        return null;
+        return new int[0];
     }
 }
