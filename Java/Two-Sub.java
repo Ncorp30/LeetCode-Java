@@ -1,22 +1,27 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Subtraction {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Input two numbers
-        System.out.print("Enter the first number: ");
-        int num1 = scanner.nextInt();
+        try {
+            // Input two numbers
+            System.out.print("Enter the first number: ");
+            int num1 = scanner.nextInt();
 
-        System.out.print("Enter the second number: ");
-        int num2 = scanner.nextInt();
+            System.out.print("Enter the second number: ");
+            int num2 = scanner.nextInt();
 
-        // Perform subtraction
-        int result = num1 - num2;
+            // Perform subtraction
+            int result = num1 - num2;
 
-        // Display the result
-        System.out.println("The subtraction is: " + result);
-
-        scanner.close();
+            // Display the result
+            System.out.println("The subtraction is: " + result);
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter integer values only.");
+        } finally {
+            scanner.close();
+        }
     }
 }
