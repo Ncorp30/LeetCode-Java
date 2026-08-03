@@ -24,7 +24,7 @@ public class LinkedListCycle {
         }
                 
         while (slowNode !=null && fastNode!=null){
-            if (slowNode.val == fastNode.val ) return true;
+            if (slowNode == fastNode ) return true;
             
             slowNode = slowNode.next;
             fastNode = fastNode.next;
