@@ -7,17 +7,20 @@ public class LRUCache {
     int iCapacity;
     int iCurrentSize = 0;
     Map<Integer, Node> map = new HashMap<Integer, Node>();
-    int iLastKey = -1;
-    int iFirstKey = -1;
+    private final Node head = new Node();
+    private final Node tail = new Node();
 
     private class Node {
+        public int key;
         public int value;
-        public int nextKey = -1;
-        public int preKey = -1;
+        public Node next;
+        public Node prev;
     }
 
     public LRUCache(int capacity) {
         this.iCapacity = capacity;
+        head.next = tail;
+        tail.prev = head;
     }
 
     /**
@@ -27,10 +30,8 @@ public class LRUCache {
      * @param key
      */
     private void updateToNewestNode(Node current, int key) {
-        map.get(iLastKey).nextKey = key;
-        current.preKey = iLastKey;
-        current.nextKey = -1;
-        iLastKey = key;
+        removeNode(current);
+        addToTail(current);
     }
 
     /**
@@ -40,14 +41,20 @@ public class LRUCache {
      * @param middleNode
      */
     private void reconnectNode(Node middleNode) {
-        Node prev = map.get(middleNode.preKey);
-        Node next = map.get(middleNode.nextKey);
-        if (prev != null) {
-            prev.nextKey = middleNode.nextKey;
-        }
-        if (next != null) {
-            next.preKey = middleNode.preKey;
-        }
+        removeNode(middleNode);
+    }
+
+    private void removeNode(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private void addToTail(Node node) {
+        Node last = tail.prev;
+        last.next = node;
+        node.prev = last;
+        node.next = tail;
+        tail.prev = node;
     }
 
     public void set(int key, int value) {
@@ -55,38 +62,30 @@ public class LRUCache {
         Node current = map.get(key);
         if (current != null) {
             current.value = value;
-            if (iFirstKey == key) {
-                iFirstKey = current.nextKey;
-                updateToNewestNode(current, key);
-            } else if (key != iLastKey) {
+            if (current != tail.prev) {
                 reconnectNode(current);
-                updateToNewestNode(current, key);
+                addToTail(current);
             }
         } else {
             current = new Node();
+            current.key = key;
             current.value = value;
-            current.preKey = iLastKey;
 
             if (iCurrentSize >= iCapacity) {
-                int newFirstKey = map.get(iFirstKey).nextKey;
-                map.remove(iFirstKey);
-                iFirstKey = newFirstKey;
+                Node first = head.next;
+                map.remove(first.key);
+                removeNode(first);
             } else {
                 iCurrentSize++;
             }
 
-            if (iLastKey != -1 && iCurrentSize != 1) {
-                map.get(iLastKey).nextKey = key;
-            }
-
-            iLastKey = key;
-        }
-        map.put(key, current);
-
-        if (iFirstKey == -1) {
-            iFirstKey = key;
+            map.put(key, current);
+            addToTail(current);
         }
 
+        if (head.next == tail) {
+            iCurrentSize = 0;
+        }
     }
 
     public int get(int key) {
@@ -95,12 +94,9 @@ public class LRUCache {
             return -1;
         }
 
-        if (iFirstKey == key && iCurrentSize != 1) {
-            iFirstKey = current.nextKey;
-            updateToNewestNode(current, key);
-        } else if (key != iLastKey) {
+        if (current != tail.prev) {
             reconnectNode(current);
-            updateToNewestNode(current, key);
+            addToTail(current);
         }
 
         return current.value;
