@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LRUCache {
-    int iCapacity;
-    int iCurrentSize = 0;
-    Map<Integer, Node> map = new HashMap<Integer, Node>();
-    int iLastKey = -1;
-    int iFirstKey = -1;
+    private int iCapacity;
+    private int iCurrentSize = 0;
+    private Map<Integer, Node> map = new HashMap<Integer, Node>();
+    private int iLastKey = -1;
+    private int iFirstKey = -1;
 
     private class Node {
         public int value;
@@ -17,6 +17,9 @@ public class LRUCache {
     }
 
     public LRUCache(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("capacity must be greater than 0");
+        }
         this.iCapacity = capacity;
     }
 
